@@ -62,7 +62,7 @@
         padding: 5px 0px 15px;
         flex-direction: row;
 
-        /deep/ .mat-button {
+        ::ng-deep .mat-button {
           border: 1px solid rgba(0, 0, 0, 0.12);
           margin-right: 5px;
           text-overflow: ellipsis;
@@ -75,7 +75,7 @@
         flex-direction: row;
         width: 100%;
 
-        /deep/ .truncate {
+        ::ng-deep .truncate {
           width: 100%;
           margin-top: auto;
         }
@@ -95,13 +95,13 @@
         }
 
         .sql-query {
-          /deep/ .mat-form-field {
+          ::ng-deep .mat-form-field {
             width: 100%;
             margin-top: 10px;
           }
         }
 
-        /deep/ .mat-radio-button {
+        ::ng-deep .mat-radio-button {
           margin-right: 10px;
         }
       }

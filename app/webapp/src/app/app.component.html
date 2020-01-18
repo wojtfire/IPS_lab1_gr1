@@ -1,0 +1,78 @@
+<router-outlet></router-outlet>
+<div class="navbar">
+  <img src="assets/logo.png" class="logo" />
+  <span class="logo-span">Database benchmark</span>
+</div>
+<mat-progress-bar
+  *ngIf="loading"
+  mode="indeterminate"
+  class="loader"
+></mat-progress-bar>
+<div class="container">
+  <div class="content">
+    <mat-expansion-panel class="space-below">
+      <mat-expansion-panel-header>
+        Basic operations
+      </mat-expansion-panel-header>
+      <div class="buttons">
+        <button mat-button (click)="initDb(DatabaseEnum.MYSQL)">
+          Initialize MySQL database
+        </button>
+        <button mat-button (click)="initDb(DatabaseEnum.CLICKHOUSE)">
+          Initialize Clickhouse database
+        </button>
+        <button mat-button (click)="loadAllTablesData(DatabaseEnum.MYSQL)">
+          Import data to MySQL database
+        </button>
+        <button mat-button (click)="loadAllTablesData(DatabaseEnum.CLICKHOUSE)">
+          Import data to Clickhouse database
+        </button>
+      </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel class="space-below">
+      <mat-expansion-panel-header>
+        Advanced operations
+      </mat-expansion-panel-header>
+      <div class="row-oriented">
+        <div class="wrapper">
+          <mat-radio-group
+            [(ngModel)]="chosenDatabaseToQuery"
+            aria-label="Select an option"
+          >
+            <mat-radio-button value="DatabaseEnum.MYSQL"
+              >MySQL Query</mat-radio-button
+            >
+            <mat-radio-button value="DatabaseEnum.CLICKHOUSE"
+              >Clickhouse Query</mat-radio-button
+            >
+          </mat-radio-group>
+          <div class="sql-query">
+            <mat-form-field>
+              <textarea
+                matInput
+                placeholder="SQL Query"
+                [(ngModel)]="sqlQuery"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="wrapper bottom">
+          <div class="row-oriented">
+            <mat-form-field class="truncate">
+              <mat-label>Truncate table</mat-label>
+              <mat-select [(ngModel)]="tablesToTruncate" multiple>
+                <mat-option
+                  *ngFor="let table of databaseTables"
+                  [value]="table"
+                >
+                  {{ table }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-button (click)="truncateTables()">Truncate</button>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </div>
+</div>

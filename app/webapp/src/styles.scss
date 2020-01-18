@@ -1,0 +1,33 @@
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+* {
+  box-sizing: border-box;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ededed;
+}
+
+@font-face {
+  font-family: "Open Sans";
+  src: url("assets/BalooBhaijaan-Regular.ttf") format("truetype");
+  src: url("assets/BalooBhaijaan-Regular.woff") format("woff"),
+    url("assets/BalooBhaijaan-Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

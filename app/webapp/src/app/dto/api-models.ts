@@ -3,6 +3,7 @@ import { DatabaseEnum } from "../enum/database-enum";
 export interface DatabaseDataDto {
   databaseName?: DatabaseEnum;
   tableName?: string;
+  query?: string;
 }
 
 export interface TruncateDto {
@@ -10,11 +11,11 @@ export interface TruncateDto {
 }
 
 export interface DatabaseTablesDto {
-  mysqlTables: string[];
-  clickhouseTables: string[];
+  mysqlTables?: string[];
+  clickhouseTables?: string[];
 }
 
 export interface BenchmarkDto {
-  elapsedTime: string;
-  rows: number;
+  elapsedTime?: string;
+  rows?: number;
 }

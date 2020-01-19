@@ -9,15 +9,15 @@ export enum TableEnum {
 
 export const getTableEnum = (value: string): TableEnum => {
   switch (value) {
-    case TableEnum.TAGS:
+    case TableEnum.TAGS.toString():
       return TableEnum.TAGS;
-    case TableEnum.MOVIES:
+    case TableEnum.MOVIES.toString():
       return TableEnum.MOVIES;
-    case TableEnum.RATINGS:
+    case TableEnum.RATINGS.toString():
       return TableEnum.RATINGS;
-    case TableEnum.LINKS:
+    case TableEnum.LINKS.toString():
       return TableEnum.LINKS;
-    case TableEnum.GENOME_TAGS:
+    case TableEnum.GENOME_TAGS.toString():
       return TableEnum.GENOME_TAGS;
     default:
       return TableEnum.GENOME_SCORES;

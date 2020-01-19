@@ -1,13 +1,18 @@
 import { Component, OnInit, OnDestroy, AfterViewChecked } from "@angular/core";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { AppService } from "./app-service.service";
-import { Subject } from "rxjs";
+import { Subject, Observable, Observer } from "rxjs";
 import { DatabaseEnum, getDabaseEnum } from "./enum/database-enum";
 import { takeUntil } from "rxjs/operators";
 import { DatabaseTablePipe } from "./pipe/database-table.pipe";
-import { TruncateDto, DatabaseDataDto } from "./dto/api-models";
+import {
+  TruncateDto,
+  DatabaseDataDto,
+  DatabaseTablesDto
+} from "./dto/api-models";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TableEnum, getTableEnum } from "./enum/table-enum";
+import { FilterTablesPipe } from "./pipe/filter-tables.pipe";
 
 @Component({
   selector: "app-root",
@@ -23,14 +28,17 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   sqlQuery: string;
   chosenDatabaseToQuery: DatabaseEnum;
   loading: boolean;
+  availableTables = Object.keys(TableEnum);
 
   destroy$ = new Subject<boolean>();
   tableLoaded$ = new Subject<boolean>();
+  tableLoadFinished$ = new Subject<boolean>();
 
   constructor(
     private service: AppService,
     private databaseTablePipe: DatabaseTablePipe,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private filterPipe: FilterTablesPipe
   ) {}
 
   ngOnInit() {
@@ -45,7 +53,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    // console.log(this.chosenDatabaseToQuery);
+    // console.log(
+    //   this.filterPipe.transform(this.databaseTables, DatabaseEnum.CLICKHOUSE)
+    // );
   }
 
   truncateTables() {
@@ -59,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(
         res => {
           if (res.statusText === "OK") {
-            this.openSnackBar("Tables truncated", null);
+            this.openSnackBar("Tables truncated", "OK");
             this.tablesToTruncate = [];
             this.loading = false;
           }
@@ -74,8 +84,8 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       .getTables()
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        tables => {
-          this.setDatabaseTables(tables);
+        dto => {
+          this.setDatabaseTables(dto);
           this.loading = false;
         },
         err => (this.loading = false)
@@ -91,17 +101,24 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     return dto;
   }
 
-  private setDatabaseTables(tables) {
-    this.databaseTables = [
-      ...this.databaseTablePipe.transform(
-        tables.mysqlTables,
-        DatabaseEnum.MYSQL
-      ),
-      ...this.databaseTablePipe.transform(
-        tables.clickhouseTables,
-        DatabaseEnum.CLICKHOUSE
-      )
-    ];
+  private setDatabaseTables(dto: DatabaseTablesDto) {
+    if (!dto) {
+      return;
+    }
+    this.databaseTables.length = 0;
+    if (dto.clickhouseTables) {
+      this.databaseTables.push(
+        ...this.databaseTablePipe.transform(
+          dto.clickhouseTables,
+          DatabaseEnum.CLICKHOUSE
+        )
+      );
+    }
+    if (dto.mysqlTables) {
+      this.databaseTables.push(
+        ...this.databaseTablePipe.transform(dto.mysqlTables, DatabaseEnum.MYSQL)
+      );
+    }
   }
 
   private prepareDatabaseDto(value: string): DatabaseDataDto {
@@ -126,8 +143,9 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(
         res => {
           res.statusText === "OK" &&
-            this.openSnackBar("Database initialized", null);
+            this.openSnackBar("Database initialized", "OK");
           this.loading = false;
+          this.getAvailableTables();
         },
         err => (this.loading = false)
       );
@@ -135,24 +153,60 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   loadAllTablesData(database: DatabaseEnum) {
     this.loading = true;
-    Object.keys(TableEnum).forEach((tableName, index) => {
-      const dto = {} as DatabaseDataDto;
-      dto.tableName = tableName;
-      dto.databaseName = database;
-      this.service
-        .loadTableData(dto)
-        .pipe(takeUntil(this.tableLoaded$))
-        .subscribe(
-          benchmark => {
-            console.log("ok");
-            this.openSnackBar(`Table ${tableName} loaded`, null);
-            if (index === 5) {
-              this.loading = false;
-            }
-            this.tableLoaded$.next();
-          },
-          err => (this.loading = false)
-        );
-    });
+    const tableName = this.availableTables.shift();
+    const dto = {} as DatabaseDataDto;
+    dto.tableName = tableName;
+    dto.databaseName = database;
+    this.service
+      .loadTableData(dto)
+      .pipe(takeUntil(this.tableLoadFinished$))
+      .subscribe(
+        res => {
+          this.openSnackBar(
+            `Table ${tableName} loaded. Loading took: ${res.elapsedTime}seconds`,
+            "OK"
+          );
+          if (this.availableTables.length) {
+            this.loadAllTablesData(database);
+          } else {
+            this.openSnackBar(`All ${database} tables loaded`, "OK");
+            this.finishTableLoad();
+          }
+        },
+        err => {
+          this.finishTableLoad();
+          this.openSnackBar("Some error ocured", "OK");
+        }
+      );
+  }
+
+  executeQuery() {
+    if (!this.sqlQuery || !this.chosenDatabaseToQuery) {
+      return;
+    }
+    this.loading = true;
+    const dto = {} as DatabaseDataDto;
+    dto.databaseName = this.chosenDatabaseToQuery;
+    dto.query = this.sqlQuery;
+    this.service
+      .executeQuery(dto)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        benchmark => {
+          this.openSnackBar(`Query took ${benchmark.elapsedTime}`, "OK");
+          this.loading = false;
+          this.getAvailableTables();
+        },
+        err => {
+          this.loading = false;
+          this.openSnackBar("Error ocured", "OK");
+        }
+      );
+  }
+
+  private finishTableLoad() {
+    this.loading = false;
+    this.availableTables = Object.keys(TableEnum);
+    this.tableLoadFinished$.next();
   }
 }

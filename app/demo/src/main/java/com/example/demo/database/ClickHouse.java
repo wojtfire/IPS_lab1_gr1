@@ -2,6 +2,7 @@ package com.example.demo.database;
 
 import com.example.demo.util.Timer;
 import com.example.demo.web.dto.BenchmarkDto;
+import com.example.demo.web.dto.DatabaseDataDto;
 import com.example.demo.web.dto.TableEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class ClickHouse implements AutoCloseable {
         Statement table6 = conn.createStatement();
         listOfStatements.put(table1, "CREATE TABLE IF NOT EXISTS demo.tags (userId Int64, movieId Int64, tag String, `timestamp` Int64) ENGINE = Log;");
         listOfStatements.put(table2, "CREATE TABLE IF NOT EXISTS demo.ratings (userId Int64, movieId Int64, rating Float32, `timestamp` Int64) ENGINE = Log;");
-        listOfStatements.put(table3, "CREATE TABLE IF NOT EXISTS demo.movies (userId Int64, movieId String, genres String) ENGINE = Log;");
+        listOfStatements.put(table3, "CREATE TABLE IF NOT EXISTS demo.movies (movieId Int64, title String, genres String) ENGINE = Log;");
         listOfStatements.put(table4, "CREATE TABLE IF NOT EXISTS demo.links (movieId Int64, imdbId String, tmbdId String) ENGINE = Log;");
         listOfStatements.put(table5, "CREATE TABLE IF NOT EXISTS demo.genome_scores (movieId Int64, tagI Int64, relevance String) ENGINE = Log; ");
         listOfStatements.put(table6, "CREATE TABLE IF NOT EXISTS demo.genome_tags (tagId Int64, tag String) ENGINE = Log; ");
@@ -74,7 +75,7 @@ public class ClickHouse implements AutoCloseable {
     }
 
     public void truncateTable(TableEnum tableName) throws SQLException {
-        String sql = "TRUNCATE TABLE demo." + tableName.getText();
+        String sql = "TRUNCATE TABLE demo." + tableName.getText().toLowerCase();
         Statement stmt = conn.createStatement();
         stmt.execute(sql);
     }
@@ -103,5 +104,33 @@ public class ClickHouse implements AutoCloseable {
             conn = driver.connect(DB_URL, props);
             System.out.println("Clickhouse connection established");
         }
+    }
+
+    public BenchmarkDto selectAllDataFromTable(TableEnum tableName) throws SQLException {
+        String sql = "SELECT * FROM demo." + tableName.getText().toLowerCase();
+        Statement stmt = conn.createStatement();
+        timer.start();
+        ResultSet rs = stmt.executeQuery(sql);
+        return timer.stop(sql + " took ");
+    }
+
+    public BenchmarkDto executeQuery(String sql) throws SQLException {
+        Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_READ_ONLY);
+        timer.start();
+        ResultSet rs = stmt.executeQuery(sql);
+        BenchmarkDto dto = timer.stop(sql + " took ");
+        rs.last();
+        dto.setRows(rs.getRow());
+        return dto;
+    }
+
+    private List<String> getColumnTypes(ResultSet rs) throws SQLException {
+        int columnCount = rs.getMetaData().getColumnCount();
+        List<String> columnTypes = new ArrayList<>();
+        for(int i=1; i<=columnCount; i++) {
+            columnTypes.add(rs.getMetaData().getColumnTypeName(i));
+        }
+        return columnTypes;
     }
 }

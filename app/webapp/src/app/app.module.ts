@@ -18,9 +18,10 @@ import { HttpClientModule } from "@angular/common/http";
 import { DatabaseTablePipe } from "./pipe/database-table.pipe";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { FilterTablesPipe } from "./pipe/filter-tables.pipe";
 
 @NgModule({
-  declarations: [AppComponent, DatabaseTablePipe],
+  declarations: [AppComponent, DatabaseTablePipe, FilterTablesPipe],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -40,7 +41,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatSnackBarModule,
     MatProgressBarModule
   ],
-  providers: [DatabaseTablePipe],
+  providers: [DatabaseTablePipe, FilterTablesPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

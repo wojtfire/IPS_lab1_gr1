@@ -2,5 +2,7 @@ export const ROUTES = {
   TRUNCATE: "/truncate",
   TABLES: "/tables",
   DATABASE: "/database",
-  LOAD: "/load"
+  LOAD: "/load",
+  TABLEDATA: "/tableData",
+  QUERY: "/query"
 };

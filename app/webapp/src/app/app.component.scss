@@ -95,9 +95,16 @@
         }
 
         .sql-query {
+          display: flex;
+
           ::ng-deep .mat-form-field {
             width: 100%;
             margin-top: 10px;
+          }
+
+          ::ng-deep .mat-button {
+            margin-top: auto;
+            height: 56px;
           }
         }
 

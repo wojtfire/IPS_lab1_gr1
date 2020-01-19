@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.web.dto.BenchmarkDto;
+import com.example.demo.web.dto.DatabaseDataDto;
 import com.example.demo.web.dto.DatabaseTablesDto;
 import com.example.demo.web.dto.TableEnum;
 import org.springframework.http.ResponseEntity;
@@ -14,4 +15,6 @@ public interface DatabaseService {
     BenchmarkDto loadTableData(TableEnum tableName)  throws SQLException;
     void truncateTable(TableEnum tableName) throws SQLException;
     List<String> getTables() throws SQLException;
+    BenchmarkDto selectAllDataFromTable(TableEnum tableName) throws SQLException;
+    BenchmarkDto executeQuery(String sql) throws SQLException;
 }

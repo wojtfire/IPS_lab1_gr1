@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Service
@@ -50,6 +52,14 @@ public class MysqlService implements DatabaseService {
             default:
                 return mysql.loadCsvDataIntoTable("27m-movie-ratings/genome-scores.csv", "demo.genome_scores");
         }
+    }
+
+    public BenchmarkDto executeQuery(String sql) throws SQLException {
+        return mysql.executeQuery(sql);
+    }
+
+    public BenchmarkDto selectAllDataFromTable(TableEnum tableName) throws SQLException {
+        return mysql.selectAllDataFromTable(tableName);
     }
 
     public void truncateTable(TableEnum tableName) throws SQLException {

@@ -21,10 +21,23 @@
         <button mat-button (click)="initDb(DatabaseEnum.CLICKHOUSE)">
           Initialize Clickhouse database
         </button>
-        <button mat-button (click)="loadAllTablesData(DatabaseEnum.MYSQL)">
+        <button
+          mat-button
+          [disabled]="
+            (databaseTables | filterTables: DatabaseEnum.MYSQL).length !== 6
+          "
+          (click)="loadAllTablesData(DatabaseEnum.MYSQL)"
+        >
           Import data to MySQL database
         </button>
-        <button mat-button (click)="loadAllTablesData(DatabaseEnum.CLICKHOUSE)">
+        <button
+          mat-button
+          [disabled]="
+            (databaseTables | filterTables: DatabaseEnum.CLICKHOUSE).length !==
+            6
+          "
+          (click)="loadAllTablesData(DatabaseEnum.CLICKHOUSE)"
+        >
           Import data to Clickhouse database
         </button>
       </div>
@@ -39,10 +52,10 @@
             [(ngModel)]="chosenDatabaseToQuery"
             aria-label="Select an option"
           >
-            <mat-radio-button value="DatabaseEnum.MYSQL"
+            <mat-radio-button [value]="DatabaseEnum.MYSQL"
               >MySQL Query</mat-radio-button
             >
-            <mat-radio-button value="DatabaseEnum.CLICKHOUSE"
+            <mat-radio-button [value]="DatabaseEnum.CLICKHOUSE"
               >Clickhouse Query</mat-radio-button
             >
           </mat-radio-group>
@@ -54,6 +67,7 @@
                 [(ngModel)]="sqlQuery"
               ></textarea>
             </mat-form-field>
+            <button mat-button (click)="executeQuery()">Execute</button>
           </div>
         </div>
         <div class="wrapper bottom">
@@ -74,5 +88,13 @@
         </div>
       </div>
     </mat-expansion-panel>
+    <table>
+      <thead>
+        <tr></tr>
+      </thead>
+      <tbody>
+        <tr></tr>
+      </tbody>
+    </table>
   </div>
 </div>

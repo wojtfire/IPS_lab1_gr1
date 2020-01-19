@@ -97,8 +97,26 @@ public class MySQL implements AutoCloseable {
         }
     }
 
+    public BenchmarkDto selectAllDataFromTable(TableEnum tableName) throws SQLException {
+        String sql = "SELECT * FROM demo." + tableName.getText().toLowerCase();
+        Statement stmt = conn.createStatement();
+        timer.start();
+        stmt.executeQuery(sql);
+        return timer.stop(sql + " took ");
+    }
+
+    public BenchmarkDto executeQuery(String sql) throws SQLException {
+        Statement stmt = conn.createStatement();
+        timer.start();
+        ResultSet rs = stmt.executeQuery(sql);
+        BenchmarkDto dto = timer.stop(sql + " took ");
+        rs.last();
+        dto.setRows(rs.getRow());
+        return dto;
+    }
+
     public void truncateTable(TableEnum tableName) throws SQLException {
-        String sql = "TRUNCATE TABLE demo." + tableName.getText();
+        String sql = "TRUNCATE TABLE demo." + tableName.getText().toLowerCase();
         Statement stmt = conn.createStatement();
         stmt.execute(sql);
     }

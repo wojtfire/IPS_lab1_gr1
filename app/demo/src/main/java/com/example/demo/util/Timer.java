@@ -32,7 +32,7 @@ public class Timer {
         System.out.print(" " + parsedElapsedTime + " seconds\n");
         reset();
         BenchmarkDto dto = new BenchmarkDto();
-//        dto.setElapsedTime(String.valueOf(parsedElapsedTime));
+        dto.setElapsedTime(String.valueOf(parsedElapsedTime));
         return dto;
     }
 

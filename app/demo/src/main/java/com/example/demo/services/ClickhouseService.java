@@ -2,12 +2,14 @@ package com.example.demo.services;
 
 import com.example.demo.database.ClickHouse;
 import com.example.demo.web.dto.BenchmarkDto;
+import com.example.demo.web.dto.DatabaseDataDto;
 import com.example.demo.web.dto.TableEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Service
@@ -31,7 +33,7 @@ public class ClickhouseService implements DatabaseService {
             case LINKS:
                 return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/links.csv", "demo.links");
             case MOVIES:
-                return ch.loadCsvDataIntoTable("home/wojt/Pobrane/27m-database/movies.csv", "demo.movies");
+                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/movies.csv", "demo.movies");
             case RATINGS:
                 return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/ratings.csv", "demo.ratings");
             case GENOME_TAGS:
@@ -39,6 +41,14 @@ public class ClickhouseService implements DatabaseService {
             default:
                 return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/genome-scores.csv", "demo.genome_scores");
         }
+    }
+
+    public BenchmarkDto executeQuery(String sql) throws SQLException {
+        return ch.executeQuery(sql);
+    }
+
+    public BenchmarkDto selectAllDataFromTable(TableEnum tableName) throws SQLException {
+        return ch.selectAllDataFromTable(tableName);
     }
 
     public void loadAllTablesData() throws SQLException {

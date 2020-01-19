@@ -80,8 +80,16 @@ public class DatabaseFactory {
         return dto;
     }
 
+    public BenchmarkDto executeQuery(DatabaseDataDto dto) throws SQLException {
+        return getServiceBasedOnDatabaseName(dto).executeQuery(dto.getQuery());
+    }
+
+    public BenchmarkDto selectAllTableData(DatabaseDataDto dto) throws SQLException {
+        return getServiceBasedOnDatabaseName(dto).selectAllDataFromTable(dto.getTableName());
+    }
+
     private List<DatabaseService> getServiceBasedOnEnumString(String databaseName) {
-        switch(databaseName) {
+                switch(databaseName) {
             case "MYSQL":
                 return new ArrayList<>(Arrays.asList(mysqlService));
             case "CLICKHOUSE":

@@ -1,8 +1,8 @@
 package com.example.demo.web.dto;
 
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
+@Data
 public class BenchmarkDto {
     private String elapsedTime;
     private Integer rows;

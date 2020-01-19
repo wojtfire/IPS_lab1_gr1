@@ -39,4 +39,12 @@ export class AppService {
   public loadTableData(dto: DatabaseDataDto): Observable<BenchmarkDto> {
     return this.http.post<BenchmarkDto>(URL + ROUTES.LOAD, dto);
   }
+
+  public getAllTableData(dto: DatabaseDataDto): Observable<BenchmarkDto> {
+    return this.http.post<BenchmarkDto>(URL + ROUTES.TABLEDATA, dto);
+  }
+
+  public executeQuery(dto: DatabaseDataDto): Observable<BenchmarkDto> {
+    return this.http.post<BenchmarkDto>(URL + ROUTES.QUERY, dto);
+  }
 }

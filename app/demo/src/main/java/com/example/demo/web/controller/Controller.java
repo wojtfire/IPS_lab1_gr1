@@ -38,4 +38,18 @@ public class Controller {
     @CrossOrigin
     @PostMapping("/load")
     public BenchmarkDto loadTable(@RequestBody DatabaseDataDto dto) throws SQLException { return databaseFactory.loadTableData(dto); }
+
+    @CrossOrigin
+    @PostMapping("/tableData")
+    public BenchmarkDto getAllTableData(@RequestBody DatabaseDataDto dto) throws SQLException { return databaseFactory.selectAllTableData(dto); }
+
+    @CrossOrigin
+    @PostMapping("/query")
+    public BenchmarkDto executeQuery(@RequestBody DatabaseDataDto dto) throws SQLException { return databaseFactory.executeQuery(dto); }
+
+    @CrossOrigin
+    @PostMapping("/copy")
+    public BenchmarkDto copyTableBetweenDatabases(){
+        return new BenchmarkDto();
+    };
 }

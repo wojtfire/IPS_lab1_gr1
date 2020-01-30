@@ -70,14 +70,23 @@ public class ClickHouse implements AutoCloseable {
         ClickHouseStatement stmt = conn.createStatement();
         timer.start();
         stmt.write().table(tableName).data(new File(filePath), ClickHouseFormat.TSV).send();
-        BenchmarkDto dto = timer.stop(message);
-        return dto;
+        return timer.stop(message);
     }
 
-    public void truncateTable(TableEnum tableName) throws SQLException {
+    public ResponseEntity truncateTable(TableEnum tableName) throws SQLException {
         String sql = "TRUNCATE TABLE demo." + tableName.getText().toLowerCase();
         Statement stmt = conn.createStatement();
         stmt.execute(sql);
+        System.out.println("Table " + tableName + " truncated");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    public BenchmarkDto truncateSingleTable(TableEnum tableName) throws SQLException {
+        String sql = "TRUNCATE TABLE demo." + tableName.getText().toLowerCase();
+        Statement stmt = conn.createStatement();
+        timer.start();
+        stmt.execute(sql);
+        return timer.stop("Truncate table " + tableName.getText().toLowerCase() + " took: ");
     }
 
     @Override

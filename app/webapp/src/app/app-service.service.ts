@@ -26,6 +26,10 @@ export class AppService {
     });
   }
 
+  public truncateTable(dto: DatabaseDataDto): Observable<BenchmarkDto> {
+    return this.http.post<BenchmarkDto>(URL + ROUTES.SINGLE_TRUNCATE, dto);
+  }
+
   public getTables(): Observable<DatabaseTablesDto> {
     return this.http.get<DatabaseTablesDto>(URL + ROUTES.TABLES);
   }

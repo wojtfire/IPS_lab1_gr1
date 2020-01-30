@@ -2,14 +2,12 @@ package com.example.demo.services;
 
 import com.example.demo.database.ClickHouse;
 import com.example.demo.web.dto.BenchmarkDto;
-import com.example.demo.web.dto.DatabaseDataDto;
 import com.example.demo.web.dto.TableEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 @Service
@@ -60,9 +58,12 @@ public class ClickhouseService implements DatabaseService {
         ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/genome-scores.csv", "demo.genome_scores");
     }
 
-    public void truncateTable(TableEnum tableName) throws SQLException {
-        ch.truncateTable(tableName);
-        System.out.println("Table " + tableName + " truncated");
+    public ResponseEntity truncateTable(TableEnum tableName) throws SQLException {
+        return ch.truncateTable(tableName);
+    }
+
+    public BenchmarkDto truncateSingleTable(TableEnum tableName) throws SQLException {
+        return ch.truncateSingleTable(tableName);
     }
 
     public List<String> getTables() throws SQLException {

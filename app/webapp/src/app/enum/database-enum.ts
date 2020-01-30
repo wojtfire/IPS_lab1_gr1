@@ -4,6 +4,7 @@ export enum DatabaseEnum {
   BOTH = "BOTH"
 }
 
+
 export const getDabaseEnum = (value: string): DatabaseEnum => {
   switch (value) {
     case DatabaseEnum.MYSQL:

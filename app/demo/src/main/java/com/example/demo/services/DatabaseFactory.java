@@ -54,14 +54,23 @@ public class DatabaseFactory {
     }
 
     public ResponseEntity truncateTable(TruncateDto truncateDto) {
-        truncateDto.getDatabaseDataList().stream().forEach(data -> {
+        int counter = 1;
+        for(DatabaseDataDto dto: truncateDto.getDatabaseDataList()) {
             try {
-                getServiceBasedOnDatabaseName(data).truncateTable(data.getTableName());
+                if(counter == truncateDto.getDatabaseDataList().size()) {
+                    return getServiceBasedOnDatabaseName(dto).truncateTable(dto.getTableName());
+                }
+                getServiceBasedOnDatabaseName(dto).truncateTable(dto.getTableName());
+                counter++;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        });
-        return new ResponseEntity(HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.REQUEST_TIMEOUT);
+    }
+
+    public BenchmarkDto truncateSingleTable(DatabaseDataDto dto) throws SQLException {
+        return getServiceBasedOnDatabaseName(dto).truncateSingleTable(dto.getTableName());
     }
 
     public DatabaseTablesDto getTables(String database) {

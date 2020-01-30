@@ -90,10 +90,20 @@
     </mat-expansion-panel>
     <table>
       <thead>
-        <tr></tr>
+        <tr>
+          <th>Database</th>
+          <th>Query/Type</th>
+          <th>Elapsed time [sec]</th>
+          <th>Rows count</th>
+        </tr>
       </thead>
       <tbody>
-        <tr></tr>
+        <tr *ngFor="let benchmark of benchmarks">
+          <td *ngIf="benchmark.databaseName">{{ benchmark.databaseName }}</td>
+          <td *ngIf="benchmark.query">{{ benchmark.query }}</td>
+          <td *ngIf="benchmark.elapsedTime">{{ benchmark.elapsedTime }}</td>
+          <td *ngIf="benchmark.rows">{{ benchmark.rows }}</td>
+        </tr>
       </tbody>
     </table>
   </div>

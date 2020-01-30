@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, AfterViewChecked } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewChecked,
+  Query
+} from "@angular/core";
 import { FormGroup, FormBuilder } from "@angular/forms";
 import { AppService } from "./app-service.service";
 import { Subject, Observable, Observer } from "rxjs";
@@ -8,7 +14,8 @@ import { DatabaseTablePipe } from "./pipe/database-table.pipe";
 import {
   TruncateDto,
   DatabaseDataDto,
-  DatabaseTablesDto
+  DatabaseTablesDto,
+  QueryDto
 } from "./dto/api-models";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { TableEnum, getTableEnum } from "./enum/table-enum";
@@ -29,10 +36,13 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   chosenDatabaseToQuery: DatabaseEnum;
   loading: boolean;
   availableTables = Object.keys(TableEnum);
+  benchmarks: QueryDto[] = [];
 
   destroy$ = new Subject<boolean>();
   tableLoaded$ = new Subject<boolean>();
   tableLoadFinished$ = new Subject<boolean>();
+  tableTruncate$ = new Subject<boolean>();
+  tableTruncateFinished$ = new Subject<boolean>();
 
   constructor(
     private service: AppService,
@@ -53,9 +63,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    // console.log(
-    //   this.filterPipe.transform(this.databaseTables, DatabaseEnum.CLICKHOUSE)
-    // );
+    // console.log(this.benchmarks);
   }
 
   truncateTables() {
@@ -63,18 +71,36 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       return;
     }
     this.loading = true;
+    const table = this.tablesToTruncate.shift();
+    const dto = this.prepareDatabaseDto(table);
     this.service
-      .truncateTables(this.parseTablesToTruncate(this.tablesToTruncate))
-      .pipe(takeUntil(this.destroy$))
+      .truncateTable(dto)
+      .pipe(takeUntil(this.tableTruncateFinished$ || this.destroy$))
       .subscribe(
-        res => {
-          if (res.statusText === "OK") {
-            this.openSnackBar("Tables truncated", "OK");
-            this.tablesToTruncate = [];
+        benchmark => {
+          this.openSnackBar(
+            `Table ${dto.tableName.toLowerCase()} truncated`,
+            "OK"
+          );
+          this.addNewBenchmark(
+            dto.databaseName,
+            `Table ${dto.tableName.toLowerCase()} truncate`,
+            benchmark.elapsedTime,
+            benchmark.rows
+          );
+          if (this.tablesToTruncate.length) {
+            this.truncateTables();
+          } else {
+            this.openSnackBar(`All tables truncated`, "OK");
             this.loading = false;
+            this.tablesToTruncate = [];
           }
         },
-        err => (this.loading = false)
+        err => {
+          this.loading = false;
+          this.openSnackBar("Some error ocured", "OK");
+          this.tablesToTruncate = [];
+        }
       );
   }
 
@@ -92,7 +118,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       );
   }
 
-  parseTablesToTruncate(tables: string[]): TruncateDto {
+  private parseTablesToTruncate(tables: string[]): TruncateDto {
     const dto = { databaseDataList: [] } as TruncateDto;
     tables &&
       tables.forEach(table => {
@@ -159,12 +185,18 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     dto.databaseName = database;
     this.service
       .loadTableData(dto)
-      .pipe(takeUntil(this.tableLoadFinished$))
+      .pipe(takeUntil(this.tableLoadFinished$ || this.destroy$))
       .subscribe(
         res => {
           this.openSnackBar(
             `Table ${tableName} loaded. Loading took: ${res.elapsedTime}seconds`,
             "OK"
+          );
+          this.addNewBenchmark(
+            dto.databaseName,
+            `Data load to ${dto.tableName.toLowerCase()} table`,
+            res.elapsedTime,
+            res.rows
           );
           if (this.availableTables.length) {
             this.loadAllTablesData(database);
@@ -194,6 +226,12 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
       .subscribe(
         benchmark => {
           this.openSnackBar(`Query took ${benchmark.elapsedTime}`, "OK");
+          this.addNewBenchmark(
+            dto.databaseName,
+            dto.query,
+            benchmark.elapsedTime,
+            benchmark.rows
+          );
           this.loading = false;
           this.getAvailableTables();
         },
@@ -208,5 +246,19 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.loading = false;
     this.availableTables = Object.keys(TableEnum);
     this.tableLoadFinished$.next();
+  }
+
+  private addNewBenchmark(
+    databaseName: DatabaseEnum,
+    query: string,
+    elapsedTime: string,
+    rows: number
+  ) {
+    const dto = {} as QueryDto;
+    dto.databaseName = databaseName;
+    dto.query = query;
+    dto.elapsedTime = elapsedTime;
+    dto.rows = rows;
+    this.benchmarks.push(dto);
   }
 }

@@ -115,10 +115,20 @@ public class MySQL implements AutoCloseable {
         return dto;
     }
 
-    public void truncateTable(TableEnum tableName) throws SQLException {
+    public ResponseEntity truncateTable(TableEnum tableName) throws SQLException {
         String sql = "TRUNCATE TABLE demo." + tableName.getText().toLowerCase();
         Statement stmt = conn.createStatement();
         stmt.execute(sql);
+        System.out.println("Table " + tableName + " truncated");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    public BenchmarkDto truncateSingleTable(TableEnum tableName) throws SQLException {
+        String sql = "TRUNCATE TABLE demo." + tableName.getText().toLowerCase();
+        timer.start();
+        Statement stmt = conn.createStatement();
+        stmt.execute(sql);
+        return this.timer.stop("Truncate table " + tableName.getText().toLowerCase() + " took: ");
     }
 
     public List<String> getTables() throws SQLException {

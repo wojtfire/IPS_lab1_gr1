@@ -1,17 +1,13 @@
 package com.example.demo.services;
 
-import ch.qos.logback.classic.db.names.TableName;
 import com.example.demo.database.MySQL;
 import com.example.demo.web.dto.BenchmarkDto;
-import com.example.demo.web.dto.DatabaseTablesDto;
 import com.example.demo.web.dto.TableEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 @Service
@@ -62,9 +58,12 @@ public class MysqlService implements DatabaseService {
         return mysql.selectAllDataFromTable(tableName);
     }
 
-    public void truncateTable(TableEnum tableName) throws SQLException {
-        mysql.truncateTable(tableName);
-        System.out.println("Table " + tableName + " truncated");
+    public ResponseEntity truncateTable(TableEnum tableName) throws SQLException {
+        return mysql.truncateTable(tableName);
+    }
+
+    public BenchmarkDto truncateSingleTable(TableEnum tableName) throws SQLException {
+        return mysql.truncateSingleTable(tableName);
     }
 
     public List<String> getTables() throws SQLException {

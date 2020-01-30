@@ -18,9 +18,14 @@ public class Controller {
 
     @CrossOrigin
     @PostMapping("/truncate")
-    @ResponseStatus(value = HttpStatus.OK)
     public ResponseEntity truncateTable(@RequestBody TruncateDto truncateDto) {
         return databaseFactory.truncateTable(truncateDto);
+    }
+
+    @CrossOrigin
+    @PostMapping("/singleTruncate")
+    public BenchmarkDto truncateSingleTable(@RequestBody DatabaseDataDto dto) throws SQLException {
+        return databaseFactory.truncateSingleTable(dto);
     }
 
     @CrossOrigin

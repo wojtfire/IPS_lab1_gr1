@@ -19,3 +19,8 @@ export interface BenchmarkDto {
   elapsedTime?: string;
   rows?: number;
 }
+
+export interface QueryDto extends BenchmarkDto {
+  query: string;
+  databaseName: DatabaseEnum;
+}

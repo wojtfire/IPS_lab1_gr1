@@ -8,7 +8,7 @@ import com.google.common.collect.Table;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.xml.ws.Response;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class MySQL implements AutoCloseable {
 
     public BenchmarkDto loadCsvDataIntoTable(String filePath, String tableName) throws SQLException {
         String message = "Mysql load of " + tableName + " table took: ";
-        String sql = "LOAD DATA INFILE '" + filePath + "' INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t' ESCAPED BY '\\b' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' IGNORE 1 ROWS";
+        String sql = "LOAD DATA LOCAL INFILE '" + filePath + "' INTO TABLE " + tableName + " FIELDS TERMINATED BY '\\t' ESCAPED BY '\\b' ENCLOSED BY '\"' LINES TERMINATED BY '\\n' IGNORE 1 ROWS";
         Statement stmt = conn.createStatement();
         timer.start();
         ResultSet rs = stmt.executeQuery(sql);
@@ -151,7 +151,7 @@ public class MySQL implements AutoCloseable {
 
     private void setNewUrl() throws SQLException {
         if(!DB_URL.endsWith("/demo")) {
-            DB_URL += "/demo";
+            DB_URL += "/demo?allowLoadLocalInfile=true";
             conn = DriverManager.getConnection(DB_URL, "root", "root");
             System.out.println("MySQL database demo connected");
         }

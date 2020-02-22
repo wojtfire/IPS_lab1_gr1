@@ -27,17 +27,17 @@ public class ClickhouseService implements DatabaseService {
     public BenchmarkDto loadTableData(TableEnum tableName) throws SQLException {
         switch (tableName) {
             case TAGS:
-                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/tags.csv", "demo.tags");
+                return ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/tags.csv", "demo.tags");
             case LINKS:
-                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/links.csv", "demo.links");
+                return ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/links.csv", "demo.links");
             case MOVIES:
-                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/movies.csv", "demo.movies");
+                return ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/movies.csv", "demo.movies");
             case RATINGS:
-                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/ratings.csv", "demo.ratings");
+                return ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/ratings.csv", "demo.ratings");
             case GENOME_TAGS:
-                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/genome-tags.csv", "demo.genome_tags");
+                return ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-tags.csv", "demo.genome_tags");
             default:
-                return ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/genome-scores.csv", "demo.genome_scores");
+                return ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-scores.csv", "demo.genome_scores");
         }
     }
 
@@ -50,12 +50,12 @@ public class ClickhouseService implements DatabaseService {
     }
 
     public void loadAllTablesData() throws SQLException {
-        ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/movies.csv", "demo.movies");
-        ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/tags.csv", "demo.tags");
-        ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/ratings.csv", "demo.ratings");
-        ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/links.csv", "demo.links");
-        ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/genome-tags.csv", "demo.genome_tags");
-        ch.loadCsvDataIntoTable("/home/wojt/Pobrane/27m-database/genome-scores.csv", "demo.genome_scores");
+        ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/movies.csv", "demo.movies");
+        ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/tags.csv", "demo.tags");
+        ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/ratings.csv", "demo.ratings");
+        ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/links.csv", "demo.links");
+        ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-tags.csv", "demo.genome_tags");
+        ch.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-scores.csv", "demo.genome_scores");
     }
 
     public ResponseEntity truncateTable(TableEnum tableName) throws SQLException {

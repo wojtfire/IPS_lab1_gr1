@@ -91,7 +91,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewChecked {
           if (this.tablesToTruncate.length) {
             this.truncateTables();
           } else {
-            this.openSnackBar(`All tables truncated`, "OK");
+            this.openSnackBar(`Table ${dto.databaseName}.${dto.tableName} truncated`, "OK");
             this.loading = false;
             this.tablesToTruncate = [];
           }

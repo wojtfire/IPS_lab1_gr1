@@ -4,7 +4,6 @@ services:
   mysql:
     container_name: mysql
     image: mysql:latest
-    command: --performance-schema --secure-file-priv=''
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -13,16 +12,11 @@ services:
       MYSQL_PASSWORD: root
     ports:
       - "3307:3306"
-    volumes:
-      - /home/wojt/Pobrane/27m-database:/var/lib/mysql/27m-movie-ratings
-  
+    
   clickhouse:
     container_name: clickhouse
     image: yandex/clickhouse-server
     ports:
       - "8123:8123"
       - "9000:9000"
-    volumes:
-      - /home/wojt/Pulpit/27m-movie-ratings-clickhouse:/var/lib/clickhouse/27m-movie-ratings
-
-
+    

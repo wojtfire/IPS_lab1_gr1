@@ -25,28 +25,28 @@ public class MysqlService implements DatabaseService {
     }
 
     public void loadAllTablesData() throws SQLException {
-        mysql.loadCsvDataIntoTable("27m-movie-ratings/movies.csv", "demo.movies");
-        mysql.loadCsvDataIntoTable("27m-movie-ratings/tags.csv", "demo.tags");
-        mysql.loadCsvDataIntoTable("27m-movie-ratings/ratings.csv", "demo.ratings");
-        mysql.loadCsvDataIntoTable("27m-movie-ratings/links.csv", "demo.links");
-        mysql.loadCsvDataIntoTable("27m-movie-ratings/genome-tags.csv", "demo.genome_tags");
-        mysql.loadCsvDataIntoTable("27m-movie-ratings/genome-scores.csv", "demo.genome_scores");
+        mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/movies.csv", "demo.movies");
+        mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/tags.csv", "demo.tags");
+        mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/ratings.csv", "demo.ratings");
+        mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/links.csv", "demo.links");
+        mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-tags.csv", "demo.genome_tags");
+        mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-scores.csv", "demo.genome_scores");
     }
 
     public BenchmarkDto loadTableData(TableEnum tableName) throws SQLException {
         switch (tableName) {
             case TAGS:
-                return mysql.loadCsvDataIntoTable("27m-movie-ratings/tags.csv", "demo.tags");
+                return mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/tags.csv", "demo.tags");
             case LINKS:
-                return mysql.loadCsvDataIntoTable("27m-movie-ratings/links.csv", "demo.links");
+                return mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/links.csv", "demo.links");
             case MOVIES:
-                return mysql.loadCsvDataIntoTable("27m-movie-ratings/movies.csv", "demo.movies");
+                return mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/movies.csv", "demo.movies");
             case RATINGS:
-                return mysql.loadCsvDataIntoTable("27m-movie-ratings/ratings.csv", "demo.ratings");
+                return mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/ratings.csv", "demo.ratings");
             case GENOME_TAGS:
-                return mysql.loadCsvDataIntoTable("27m-movie-ratings/genome-tags.csv", "demo.genome_tags");
+                return mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-tags.csv", "demo.genome_tags");
             default:
-                return mysql.loadCsvDataIntoTable("27m-movie-ratings/genome-scores.csv", "demo.genome_scores");
+                return mysql.loadCsvDataIntoTable("C:/Users/stanl/Desktop/IPS_lab1_gr1-master/genome-scores.csv", "demo.genome_scores");
         }
     }
 
